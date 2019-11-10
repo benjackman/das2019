@@ -50,5 +50,3 @@ FINd generates a 256-bit hash of an image. The first line contains this hash in 
 
 Please see `findExample.ipynb` to see how FINd can be loaded from Python.
 
-
-```
