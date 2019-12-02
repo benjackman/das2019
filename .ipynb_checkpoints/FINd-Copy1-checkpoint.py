@@ -86,6 +86,9 @@ class FINDHasher:
                 r, g, b = rgb_image.getpixel((j, i))
 				# Turning to grayscale by changing the luminence 
                 # This index positioning in the list creates an enormous list where each position is the grayscale number 
+                ####
+                # Seems like an obvious candidate for optimisation here - either a cython implementation, or in a row-wise list method
+                ####
                 luma[i * numCols + j] = (
 					self.LUMA_FROM_R_COEFF * r
 					+ self.LUMA_FROM_G_COEFF * g
@@ -284,6 +287,9 @@ if __name__ == "__main__":
 # Compute the box size somewhere in here
 
 # Run box filter on full 512*512
+#####
+# Note that Scott points out that we do not need to do this box filter on all 512*512
+####
 
 # Lays out a grid of evenly spaced pixels 
 # Does the decimate over the sampled
