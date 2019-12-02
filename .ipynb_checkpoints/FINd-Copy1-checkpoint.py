@@ -71,15 +71,19 @@ class FINDHasher:
 
 	def fillFloatLumaFromBufferImage(self, img, luma): # he passes buffer1 as luma in the line above (in the fromImage object)
 		
+        # Image size
         numCols, numRows = img.size
-		rgb_image = img.convert("RGB")
+		# Make sure we're in RGB colour space
+        rgb_image = img.convert("RGB")
 		
         # This is line is run twice (here and bove for some reason)
         numCols, numRows = img.size
         
 		for i in range(numRows):
 			for j in range(numCols):
-				r, g, b = rgb_image.getpixel((j, i))
+				
+                # return the r g and b values for each pixel
+                r, g, b = rgb_image.getpixel((j, i))
 				# Turning to grayscale by changing the luminence 
                 # This index positioning in the list creates an enormous list where each position is the grayscale number 
                 luma[i * numCols + j] = (
@@ -98,20 +102,28 @@ class FINDHasher:
 		buffer16x64,
 		buffer16x16,
 	):
-		windowSizeAlongRows = self.computeBoxFilterWindowSize(numCols)
+		# Compute height and width of box filter
+        windowSizeAlongRows = self.computeBoxFilterWindowSize(numCols)
 		windowSizeAlongCols = self.computeBoxFilterWindowSize(numRows)
 		
 		# Here fullbuffer1 and fullbuffer2 are just buffer1 and buffer2 (just renamed)
+        # We take pixels 
+        # Converted images to grayscale - then blurred - then pick out 64*64 pixels - decimtefloat below - 
         self.boxFilter(fullBuffer1,fullBuffer2,numRows,numCols,windowSizeAlongRows,windowSizeAlongCols)
 		fullBuffer1=fullBuffer2
-
+        
+        # This picks out 
 		self.decimateFloat(fullBuffer1, numRows, numCols, buffer64x64)
+        
+        # Don't worry about optimising this? Great if you can? 
 		self.dct64To16(buffer64x64, buffer16x64, buffer16x16)
 		hash = self.dctOutput2hash(buffer16x16)
 		return hash
 
 	@classmethod
-	def decimateFloat(
+	
+    # 
+    def decimateFloat(
 		cls, in_, inNumRows, inNumCols, out  # numRows x numCols in row-major order
 	):
 		for i in range(64):
@@ -180,18 +192,33 @@ class FINDHasher:
 		""" Round up."""
 		# This avoides the typical off by one error
         # But the int function rounds DOWN we think - I have sent him an email  
+        # Turns out it rounds up - some trickery
+        
+        # Computes the size of the hash (8*8)? or (64*64)? - in case we have 
+        # replace this with math.ceil()
+        
+        # 
+        
         return int(
 			(dimension + cls.FIND_WINDOW_SIZE_DIVISOR - 1)
 			/ cls.FIND_WINDOW_SIZE_DIVISOR
 		)
 
 	@classmethod
+    # List the inputs that we actually pass here:
+    # Last two are window sizes. 8 for now. 
 	def boxFilter(cls,input,output,rows,cols,rowWin,colWin):
 		
-        # 
+        # We are summing up over window size
+        # And dividing by the size of that window
+        # So you're just getting a "blur". Think of it as - look at a pixel and take the average of all of its neighbours.
+        # Note that the boxfilter function accounts for things on the edge of the function. If we start at the corner, we do an occluded box so we don't index out of range. 
         
         # Not sure why he's doing weird division here 
         # We think that he is creating the window size or something 
+        
+        # Forces it to round up if the values are odd
+        # Scott: "Somewhat arbitrary how we handle these edge cases"
         
         halfColWin = int((colWin + 2) / 2)  # 7->4, 8->5
 		halfRowWin = int((rowWin + 2) / 2) 
@@ -210,6 +237,9 @@ class FINDHasher:
 				for k in range(xmin,xmax):
 					for l in range(ymin,ymax):
 						# += is just a shortuct for s = s + ....
+                        # Add up all the pixels in the window - grayscale image at this point so we add up everything in the window
+                        # Then divide that total by the size of the window (to get the average)
+                        # The window size changes if we are near the edge of the picture, so we compute the window size directly, ((xmax-xmin)*(ymax-ymin))
                         s+=input[k*rows+l]
 				output[i*rows+j]=s/((xmax-xmin)*(ymax-ymin))
 
@@ -230,3 +260,68 @@ if __name__ == "__main__":
 		h=find.fromFile(filename)
 		print("{},{}".format(h,filename))
 		print(find.prettyHash(h))
+        
+        
+        
+# load in an image
+# Make sure it's no bigger than 512*512 
+
+# Get the size
+## Create a bunch of variables that are the same size of the image
+# - for example, buffer1 and buffer2 are just arrays that are the same size as the image
+# - for example, first thing we do, is put the img in as a black and white image in buffer1
+# - then it gets passed as an input to the function that returns black and white images
+# ---- this is fillfloatluma
+# - then sends the rest of the storage objects - emptily - to the next function
+
+# Allocate some space (I think this is just the variables)
+
+# Convert it to black and white --> Convert it to "luma" which is the fancy name for it
+
+# Call the function that receives a black and white image
+# ---- find hash256fromfloatluma
+
+# Compute the box size somewhere in here
+
+# Run box filter on full 512*512
+
+# Lays out a grid of evenly spaced pixels 
+# Does the decimate over the sampled
+
+# Thats in findhash256fromfloatluma --> self.decimatefloat takes empty buffer64*64 gets 
+
+# self.dt64to16 - discrete cosine transofmration that takes the 64*64 and compresses/downsamples to 16*16
+# Keeps only the most important 16*16 pixels 
+#
+# Compute the hash
+# For the 16*16, computes teh median value of the pixels, if over the median --> 1, if under the median --> 0
+# Leaves us with a 16*16 hash that is the output
+
+
+
+
+#############
+# Accuracy - there is a github with imagehashing options that is in the imagehash file
+# How long does it take to compute the hash of average_hash (for example) versus our Findhash algorithm
+
+# Can compute hash differences, for image hashes a and b, can compute:
+# a - b
+# This tell us the implied distance between images - literally just pair-wise binary comparison. Count mismatches. 
+
+# Minimise the ingroup distance of images, Maximise the outgroup distance of images 
+# Use sampling to do that since there is too many images apparently 
+# Could just compare how close they are. Subset of this task is fine apparently. 
+
+# all images will be under /data/images - on the server 
+
+# Recall the readings about - C profile
+# So use C profile --> learn how class' methods are chained together etc 
+# Read the book first. 
+# This should identify the functions which are taking the most time. Then dive into 
+
+# Might just be better libraries. To make them run faster.
+
+# Anyway you want to optimise the code. 
+# Dont really need to mix and match the approaches if you don't want to. OR can improve further. But it doesn't seem to matter. 
+
+
