@@ -67,6 +67,11 @@ class FINDHasher:
 		numCols, numRows = img.size
 		rgb_image = img.convert("RGB")
 		numCols, numRows = img.size
+        
+        # right now we have 3 coeffs that 
+        # we loop through each three
+        # we put each of the coefficients into an array and dot product 
+        # so take dot product of the 3 lumas and the 3 rgbs 
 		for i in range(numRows):
 			for j in range(numCols):
 				r, g, b = rgb_image.getpixel((j, i))
@@ -189,7 +194,31 @@ class FINDHasher:
 		return np.array(hash.hash).astype(int).reshape((16,16))
 		#return "{}".format(np.array2string(np.array(hash.hash).astype(int).reshape((16,16)),separator=""))
 
+# recommended by the CProfiling book for benchmarking that is consistent 
 
+def readimages(number, path): #probably define path inside ):
+    return # in here you put the way we called the images randomly
+    # just returns the filenames that it selects
+
+    # Only purpose of this is for %timeit
+    # Very easy to unit test (i.e. check the optimized hashes are the same)
+    # run %memit
+def bechamrking_basic(nums, path = 'put_your_path_in_here'):
+    hasher = FindHasher()
+    for filename in read_images(nums, path):
+        hashes = hasher.fromFile(filename)
+        print(hashes)
+        return(hashes)
+    
+    
+def multi_process_fromfile(files):
+    # separate this into a different multiprocessing optimising file thingo
+    # dont forget to import multiprocessing
+    # this needs some fiddling
+    # instead of call find.fromFile I call multi_process_fromfile and see if that has a speedup 
+    with multiprocessing.Pool(2) as pool: 
+        hashes = pool.map(find.fromFile, files)
+        
 if __name__ == "__main__":
 	import sys
 	find=FINDHasher()
