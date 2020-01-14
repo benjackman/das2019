@@ -7,6 +7,8 @@ from PIL import Image
 from matrix import MatrixUtil #Ensure that matrix.py is in the same directory as this file!
 from imagehash import ImageHash
 import numpy as np
+import os
+from random import sample
 
 
 class FINDHasher:
@@ -196,19 +198,36 @@ class FINDHasher:
 
 # recommended by the CProfiling book for benchmarking that is consistent 
 
-def readimages(number, path): #probably define path inside ):
-    return # in here you put the way we called the images randomly
+def read_images_from_file(number, path):
+    
+    img_filename_list = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file.endswith('.jpg'):
+                img_filename_list.append(file)
+    
+    img_sample = sample(img_filename_list, number)
+        
+    return img_sample
+
+    # in here you put the way we called the images randomly
     # just returns the filenames that it selects
 
     # Only purpose of this is for %timeit
     # Very easy to unit test (i.e. check the optimized hashes are the same)
     # run %memit
-def bechamrking_basic(nums, path = 'put_your_path_in_here'):
-    hasher = FindHasher()
-    for filename in read_images(nums, path):
-        hashes = hasher.fromFile(filename)
-        print(hashes)
-        return(hashes)
+    
+def benchmarking_basic(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/das2019/das_images/das_images'):
+    hasher = FINDHasher()
+    hash_list = []
+    img_sample = read_images_from_file(nums, path)
+    for i in range(0, len(img_sample)):
+        img_string_input = path + '/{}'.format(img_sample[i])
+        temp_hash = hasher.fromFile(img_string_input)
+        hash_list.append(temp_hash)
+        temp_hash = []
+    # print(hash_list)
+    return(hash_list)
     
     
 def multi_process_fromfile(files):

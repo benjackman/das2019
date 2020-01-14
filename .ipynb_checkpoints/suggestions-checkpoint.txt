@@ -1,0 +1,12 @@
+- box filter online
+
+-  stack exchange for the 
+
+- testing accuracy
+
+
+- multi processing - glob 
+- include parallel
+
+random choice of the images
+glob goes through the whole list 

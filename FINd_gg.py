@@ -217,7 +217,7 @@ def read_images_from_file(number, path):
     # Very easy to unit test (i.e. check the optimized hashes are the same)
     # run %memit
     
-def benchmarking_basic(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/das2019/das_images/das_images'):
+def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_images/das_images'):
     hasher = FINDHasher()
     hash_list = []
     img_sample = read_images_from_file(nums, path)
