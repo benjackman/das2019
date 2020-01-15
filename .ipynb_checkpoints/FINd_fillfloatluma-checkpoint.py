@@ -76,9 +76,11 @@ class FINDHasher_2:
         # so take dot product of the 3 lumas and the 3 rgbs 
         
 		ratios=np.array([0.299,0.587,0.114])
-		grey= rgb_image*ratios
-		grey=np.sum(grey,axis=2)
-		luma = grey.reshape(-1)
+		# grey= rgb_image*ratios
+		grey= np.dot(rgb_image, ratios)
+		luma = grey.flatten()
+		# grey=np.sum(grey,axis=2)
+		# luma = grey.reshape(-1)
         
 # 		for i in range(numRows):
 # 			for j in range(numCols):
