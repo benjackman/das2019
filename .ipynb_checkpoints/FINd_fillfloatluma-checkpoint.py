@@ -68,6 +68,10 @@ class FINDHasher_2:
 	def fillFloatLumaFromBufferImage(self, img, luma):
 # 		numCols, numRows = img.size
 		rgb_image = img.convert("RGB")
+		rgb_image_array = np.array(rgb_image)
+		luma_array = np.array(luma) # remove this line probably
+		print(type(rgb_image_array))
+		#display(rgb_image)
 # 		numCols, numRows = img.size
         
         # right now we have 3 coeffs that 
@@ -75,10 +79,19 @@ class FINDHasher_2:
         # we put each of the coefficients into an array and dot product 
         # so take dot product of the 3 lumas and the 3 rgbs 
         
-		ratios=np.array([0.299,0.587,0.114])
-		# grey= rgb_image*ratios
-		grey= np.dot(rgb_image, ratios)
-		luma = grey.flatten()
+		ratios=np.array([np.float32(0.299),np.float32(0.587),np.float32(0.114)])
+        
+		grey = rgb_image_array*ratios
+		print(np.shape(grey))
+		display(grey)
+		# grey= np.dot(rgb_image, ratios)
+        
+		greysum = np.sum(grey, axis = 2)
+		luma_array = greysum.flatten() # remove array
+        
+        
+		# return luma # remove unlikely to work
+    
 		# grey=np.sum(grey,axis=2)
 		# luma = grey.reshape(-1)
         

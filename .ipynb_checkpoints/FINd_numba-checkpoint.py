@@ -235,13 +235,14 @@ def benchmarking_basic_1(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/
     return(hash_list)
     
     
-def multi_process_fromfile(files):
+def multi_process_fromfile(files , processors = 2):
     # separate this into a different multiprocessing optimising file thingo
     # dont forget to import multiprocessing
     # this needs some fiddling
     # instead of call find.fromFile I call multi_process_fromfile and see if that has a speedup 
-    with multiprocessing.Pool(2) as pool: 
+    with multiprocessing.Pool(processors) as pool: 
         hashes = pool.map(find.fromFile, files)
+    return hashes
         
 if __name__ == "__main__":
 	import sys

@@ -82,7 +82,7 @@ class FINDHasher:
 					+ self.LUMA_FROM_G_COEFF * g
 					+ self.LUMA_FROM_B_COEFF * b
 				)
-
+        
 	def findHash256FromFloatLuma(
 		self,
 		fullBuffer1,
@@ -210,13 +210,6 @@ def read_images_from_file(number, path):
         
     return img_sample
 
-    # in here you put the way we called the images randomly
-    # just returns the filenames that it selects
-
-    # Only purpose of this is for %timeit
-    # Very easy to unit test (i.e. check the optimized hashes are the same)
-    # run %memit
-    
 def benchmarking_basic(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/das2019/das_images/das_images'):
     hasher = FINDHasher()
     hash_list = []
@@ -229,15 +222,7 @@ def benchmarking_basic(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/da
     # print(hash_list)
     return(hash_list)
     
-    
-def multi_process_fromfile(files):
-    # separate this into a different multiprocessing optimising file thingo
-    # dont forget to import multiprocessing
-    # this needs some fiddling
-    # instead of call find.fromFile I call multi_process_fromfile and see if that has a speedup 
-    with multiprocessing.Pool(2) as pool: 
-        hashes = pool.map(find.fromFile, files)
-        
+
 if __name__ == "__main__":
 	import sys
 	find=FINDHasher()

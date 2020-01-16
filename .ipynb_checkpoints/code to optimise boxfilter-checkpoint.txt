@@ -1,0 +1,30 @@
+jit within the class using @staticmethod instead of @classmethod
+
+complexboxfilter
+
+@classmethod
+def boxfilter(self, ...)
+	complexboxfilter(...)
+
+@staticmethod
+@jit
+def complexboxfilter(xyz)
+	box filter computation
+
+multiprocessing at the 
+
+gethashfromfile()
+
+# get rid of the the 2 inner loops in the boxfilter by specifying the box upfront:
+# Check this bad boy out:
+
+copied_data = input.reshape(rows,cols)
+
+- remove the two inner loops
+
+define teh box specifically as select using e.g.:
+
+box_select = copied_data[xmin:xmax,ymin:ymax]
+
+output[i*rows+j] = np.sum(selected)/(selected.shape[0]*selected.shape[1])
+then return output

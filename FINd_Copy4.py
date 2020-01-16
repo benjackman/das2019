@@ -9,26 +9,9 @@ from imagehash import ImageHash
 import numpy as np
 import os
 from random import sample
-from numba import jit
-
-@jit
-def faster_boxFilter(input,output,rows,cols,rowWin,colWin):
-	halfColWin = int((colWin + 2) / 2)  # 7->4, 8->5
-	halfRowWin = int((rowWin + 2) / 2) 
-	for i in range(0,rows):
-		for j in range(0,cols):
-			s=0
-			xmin=max(0,i-halfRowWin)
-			xmax=min(rows,i+halfRowWin)
-			ymin=max(0,j-halfColWin)
-			ymax=min(cols,j+halfColWin)
-			for k in range(xmin,xmax):
-				for l in range(ymin,ymax):
-					s+=input[k*rows+l]
-			output[i*rows+j]=s/((xmax-xmin)*(ymax-ymin))
 
 
-class FINDHasher_1:
+class FINDHasher_4:
 
 	#  From Wikipedia: standard RGB to luminance (the 'Y' in 'YUV').
 	LUMA_FROM_R_COEFF = float(0.299)
@@ -78,27 +61,43 @@ class FINDHasher_1:
 		buffer16x16 = MatrixUtil.allocateMatrix(16, 16)
 		numCols, numRows = img.size
 		self.fillFloatLumaFromBufferImage(img, buffer1)
+		print('buffer1 is type: ', type(buffer1))
 		return self.findHash256FromFloatLuma(
 			buffer1, buffer2, numRows, numCols, buffer64x64, buffer16x64, buffer16x16
 		)
 
 	def fillFloatLumaFromBufferImage(self, img, luma):
-		numCols, numRows = img.size
-		rgb_image = img.convert("RGB")
-		numCols, numRows = img.size
+		print(type(img))
+		print(type(luma))
+# 		numCols, numRows = img.size
+# 		numCols, numRows = img.size
+
+# 		numCols, numRows = img.size
         
+		# rgb_image = img.convert("RGB")        
+		rgb_image_array = np.array(img)
+        
+		ratios = ([np.float32(0.299), np.float32(0.587), np.float32(0.114)])
+        
+		grey_scaled = rgb_image_array * ratios
+		grey_scaled_flatter = np.sum(grey_scaled, axis = 2)
+        
+		luma_array = grey_scaled_flatter.flatten()
+		luma = luma_array.tolist()
+		print(type(luma))
+		display(luma)
         # right now we have 3 coeffs that 
         # we loop through each three
         # we put each of the coefficients into an array and dot product 
         # so take dot product of the 3 lumas and the 3 rgbs 
-		for i in range(numRows):
-			for j in range(numCols):
-				r, g, b = rgb_image.getpixel((j, i))
-				luma[i * numCols + j] = (
-					self.LUMA_FROM_R_COEFF * r
-					+ self.LUMA_FROM_G_COEFF * g
-					+ self.LUMA_FROM_B_COEFF * b
-				)
+# 		for i in range(numRows):
+# 			for j in range(numCols):
+# 				r, g, b = rgb_image.getpixel((j, i))
+# 				luma[i * numCols + j] = (
+# 					self.LUMA_FROM_R_COEFF * r
+# 					+ self.LUMA_FROM_G_COEFF * g
+# 					+ self.LUMA_FROM_B_COEFF * b
+# 				)
 
 	def findHash256FromFloatLuma(
 		self,
@@ -190,7 +189,19 @@ class FINDHasher_1:
 
 	@classmethod
 	def boxFilter(cls,input,output,rows,cols,rowWin,colWin):
-		faster_boxFilter(input,output,rows,cols,rowWin,colWin)
+		halfColWin = int((colWin + 2) / 2)  # 7->4, 8->5
+		halfRowWin = int((rowWin + 2) / 2) 
+		for i in range(0,rows):
+			for j in range(0,cols):
+				s=0
+				xmin=max(0,i-halfRowWin)
+				xmax=min(rows,i+halfRowWin)
+				ymin=max(0,j-halfColWin)
+				ymax=min(cols,j+halfColWin)
+				for k in range(xmin,xmax):
+					for l in range(ymin,ymax):
+						s+=input[k*rows+l]
+				output[i*rows+j]=s/((xmax-xmin)*(ymax-ymin))
 
 	@classmethod
 	def prettyHash(cls,hash):
@@ -222,8 +233,8 @@ def read_images_from_file(number, path):
     # Very easy to unit test (i.e. check the optimized hashes are the same)
     # run %memit
     
-def benchmarking_basic_1(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/das2019/das_images/das_images'):
-    hasher = FINDHasher_1()
+def benchmarking_basic_4(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/das2019/das_images/das_images'):
+    hasher = FINDHasher_4()
     hash_list = []
     img_sample = read_images_from_file(nums, path)
     for i in range(0, len(img_sample)):
@@ -235,18 +246,17 @@ def benchmarking_basic_1(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/
     return(hash_list)
     
     
-def multi_process_fromfile(files , processors = 2):
+def multi_process_fromfile(files):
     # separate this into a different multiprocessing optimising file thingo
     # dont forget to import multiprocessing
     # this needs some fiddling
     # instead of call find.fromFile I call multi_process_fromfile and see if that has a speedup 
-    with multiprocessing.Pool(processors) as pool: 
+    with multiprocessing.Pool(2) as pool: 
         hashes = pool.map(find.fromFile, files)
-    return hashes
         
 if __name__ == "__main__":
 	import sys
-	find=FINDHasher_1()
+	find=FINDHasher()
 	for filename in sys.argv[1:]:
 		h=find.fromFile(filename)
 		print("{},{}".format(h,filename))
