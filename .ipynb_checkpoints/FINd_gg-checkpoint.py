@@ -229,14 +229,6 @@ def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_
     # print(hash_list)
     return(hash_list)
     
-    
-def multi_process_fromfile(files):
-    # separate this into a different multiprocessing optimising file thingo
-    # dont forget to import multiprocessing
-    # this needs some fiddling
-    # instead of call find.fromFile I call multi_process_fromfile and see if that has a speedup 
-    with multiprocessing.Pool(2) as pool: 
-        hashes = pool.map(find.fromFile, files)
         
 if __name__ == "__main__":
 	import sys

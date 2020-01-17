@@ -215,12 +215,6 @@ def read_images_from_file(number, path):
         
     return img_sample
 
-    # in here you put the way we called the images randomly
-    # just returns the filenames that it selects
-
-    # Only purpose of this is for %timeit
-    # Very easy to unit test (i.e. check the optimized hashes are the same)
-    # run %memit
     
 def benchmarking_basic_1(nums, path = '/content/gdrive/My Drive/DAS Summative/das_images/das_images'):
     hasher = FINDHasher_1()
@@ -234,15 +228,7 @@ def benchmarking_basic_1(nums, path = '/content/gdrive/My Drive/DAS Summative/da
     # print(hash_list)
     return(hash_list)
     
-    
-def multi_process_fromfile(files , processors = 2):
-    # separate this into a different multiprocessing optimising file thingo
-    # dont forget to import multiprocessing
-    # this needs some fiddling
-    # instead of call find.fromFile I call multi_process_fromfile and see if that has a speedup 
-    with multiprocessing.Pool(processors) as pool: 
-        hashes = pool.map(find.fromFile, files)
-    return hashes
+
         
 if __name__ == "__main__":
 	import sys

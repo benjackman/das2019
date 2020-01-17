@@ -1,0 +1,10 @@
+Overall, each of these three optimisations strategies resulted individually in some success. The Numba optimisation improved the speed of this code by around 35\%. The multiprocessing approach cut a given job of image hashes by around 45\%, and using GPUs cut it by a similar amount.\\
+\\
+ There are some weaknesses however. For example, Google Collab only allows us access to one GPU, and so we cannot combine the approaches of multiprocessing and our Numba-optimised code together. The Numba-optimised code ran on a GPU computed image hashes in around 0.2 seconds. Based on improvements from CPU multiprocessing with 2 GPUs the execution time might fall around 40\% further.\\ 
+\\
+In any case, further progress could be made by editing individual functions in the algorithm. Although I conducted some early work on this, I had issues with implementing them successfully (see attached a .py file showing an attempt to streamline FillFloatLuma, this executed without errors but failed unit tests for reasons I could not solve in time). This reflects some of the tradeoffs with optimising a foreign codebase. With the relatively cheap availability of hardware, such as through AWS, spinning up numerous CPUs and multiprocessing in the cloud (or spinning up multiple GPUs!) and computing these results relatively quickly is likely to be very cheap. Alternatively, many of the major open computation tasks have been solved through highly efficient open source libraries, such as the image hashing libraries we use below. \\
+\\
+That said, the value of optimising code at the line-level does mean it could be run on a home computer, and so more progress in that department might be valuable. Nonetheless, I have shown that careful analysis of the FINDHasher algorithm can result in significant optimisations which could be extended further at the code level if required, and with more time and expertise available to me. \\
+\\
+
+This (relatively simple) change was implemented, and an adjusted FINdHasher\_2 class and benchmarking\_2 function were executed. Similar profiling to 
