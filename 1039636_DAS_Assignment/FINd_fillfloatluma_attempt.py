@@ -11,7 +11,7 @@ import os
 from random import sample
 
 
-class FINDHasher:
+class FINDHasher_4:
 
 	#  From Wikipedia: standard RGB to luminance (the 'Y' in 'YUV').
 	LUMA_FROM_R_COEFF = float(0.299)
@@ -61,27 +61,51 @@ class FINDHasher:
 		buffer16x16 = MatrixUtil.allocateMatrix(16, 16)
 		numCols, numRows = img.size
 		self.fillFloatLumaFromBufferImage(img, buffer1)
+		print('buffer1 is type: ', type(buffer1))
 		return self.findHash256FromFloatLuma(
 			buffer1, buffer2, numRows, numCols, buffer64x64, buffer16x64, buffer16x16
 		)
 
 	def fillFloatLumaFromBufferImage(self, img, luma):
-		numCols, numRows = img.size
-		rgb_image = img.convert("RGB")
-		numCols, numRows = img.size
+		# print(type(img))
+		# print(type(luma))
+# 		numCols, numRows = img.size
+# 		numCols, numRows = img.size
+
+# 		numCols, numRows = img.size
         
+		# rgb_image = img.convert("RGB")
+        
+        
+		#######
+        ##
+        # CANT WORK OUT WHY THIS ISNT WORKING!!!
+        ##
+        ######
+        
+		rgb_image_array = np.array(img)
+        
+		ratios = ([np.float32(0.299), np.float32(0.587), np.float32(0.114)])
+        
+		grey_scaled = rgb_image_array * ratios
+		grey_scaled_flatter = np.sum(grey_scaled, axis = 2)
+        
+		luma_array = grey_scaled_flatter.flatten()
+		luma = luma_array.tolist()
+# 		print(type(luma))
+# 		display(luma)
         # right now we have 3 coeffs that 
         # we loop through each three
         # we put each of the coefficients into an array and dot product 
         # so take dot product of the 3 lumas and the 3 rgbs 
-		for i in range(numRows):
-			for j in range(numCols):
-				r, g, b = rgb_image.getpixel((j, i))
-				luma[i * numCols + j] = (
-					self.LUMA_FROM_R_COEFF * r
-					+ self.LUMA_FROM_G_COEFF * g
-					+ self.LUMA_FROM_B_COEFF * b
-				)
+# 		for i in range(numRows):
+# 			for j in range(numCols):
+# 				r, g, b = rgb_image.getpixel((j, i))
+# 				luma[i * numCols + j] = (
+# 					self.LUMA_FROM_R_COEFF * r
+# 					+ self.LUMA_FROM_G_COEFF * g
+# 					+ self.LUMA_FROM_B_COEFF * b
+# 				)
 
 	def findHash256FromFloatLuma(
 		self,
@@ -211,8 +235,8 @@ def read_images_from_file(number, path):
     return img_sample
 
     
-def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_images/das_images'):
-    hasher = FINDHasher()
+def benchmarking_basic_4(nums, path = 'C:/Users/REDACTED/Desktop/Oxford/Summatives/das2019/das_images/das_images'):
+    hasher = FINDHasher_4()
     hash_list = []
     img_sample = read_images_from_file(nums, path)
     for i in range(0, len(img_sample)):

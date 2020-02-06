@@ -82,7 +82,7 @@ class FINDHasher:
 					+ self.LUMA_FROM_G_COEFF * g
 					+ self.LUMA_FROM_B_COEFF * b
 				)
-
+        
 	def findHash256FromFloatLuma(
 		self,
 		fullBuffer1,
@@ -210,8 +210,7 @@ def read_images_from_file(number, path):
         
     return img_sample
 
-    
-def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_images/das_images'):
+def benchmarking_basic(nums, path = 'C:/Users/benja/Desktop/Oxford/Summatives/das2019/das_images/das_images'):
     hasher = FINDHasher()
     hash_list = []
     img_sample = read_images_from_file(nums, path)
@@ -223,7 +222,7 @@ def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_
     # print(hash_list)
     return(hash_list)
     
-        
+
 if __name__ == "__main__":
 	import sys
 	find=FINDHasher()

@@ -210,12 +210,6 @@ def read_images_from_file(number, path):
         
     return img_sample
 
-    # in here you put the way we called the images randomly
-    # just returns the filenames that it selects
-
-    # Only purpose of this is for %timeit
-    # Very easy to unit test (i.e. check the optimized hashes are the same)
-    # run %memit
     
 def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_images/das_images'):
     hasher = FINDHasher()

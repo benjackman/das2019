@@ -9,9 +9,26 @@ from imagehash import ImageHash
 import numpy as np
 import os
 from random import sample
+from numba import jit
+
+@jit
+def faster_boxFilter(input,output,rows,cols,rowWin,colWin):
+	halfColWin = int((colWin + 2) / 2)  # 7->4, 8->5
+	halfRowWin = int((rowWin + 2) / 2) 
+	for i in range(0,rows):
+		for j in range(0,cols):
+			s=0
+			xmin=max(0,i-halfRowWin)
+			xmax=min(rows,i+halfRowWin)
+			ymin=max(0,j-halfColWin)
+			ymax=min(cols,j+halfColWin)
+			for k in range(xmin,xmax):
+				for l in range(ymin,ymax):
+					s+=input[k*rows+l]
+			output[i*rows+j]=s/((xmax-xmin)*(ymax-ymin))
 
 
-class FINDHasher:
+class FINDHasher_1:
 
 	#  From Wikipedia: standard RGB to luminance (the 'Y' in 'YUV').
 	LUMA_FROM_R_COEFF = float(0.299)
@@ -173,19 +190,7 @@ class FINDHasher:
 
 	@classmethod
 	def boxFilter(cls,input,output,rows,cols,rowWin,colWin):
-		halfColWin = int((colWin + 2) / 2)  # 7->4, 8->5
-		halfRowWin = int((rowWin + 2) / 2) 
-		for i in range(0,rows):
-			for j in range(0,cols):
-				s=0
-				xmin=max(0,i-halfRowWin)
-				xmax=min(rows,i+halfRowWin)
-				ymin=max(0,j-halfColWin)
-				ymax=min(cols,j+halfColWin)
-				for k in range(xmin,xmax):
-					for l in range(ymin,ymax):
-						s+=input[k*rows+l]
-				output[i*rows+j]=s/((xmax-xmin)*(ymax-ymin))
+		faster_boxFilter(input,output,rows,cols,rowWin,colWin)
 
 	@classmethod
 	def prettyHash(cls,hash):
@@ -211,8 +216,8 @@ def read_images_from_file(number, path):
     return img_sample
 
     
-def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_images/das_images'):
-    hasher = FINDHasher()
+def benchmarking_basic_1(nums, path = '/content/gdrive/My Drive/DAS Summative/das_images/das_images'):
+    hasher = FINDHasher_1()
     hash_list = []
     img_sample = read_images_from_file(nums, path)
     for i in range(0, len(img_sample)):
@@ -223,10 +228,11 @@ def benchmarking_basic(nums, path = '/content/gdrive/My Drive/DAS Summative/das_
     # print(hash_list)
     return(hash_list)
     
+
         
 if __name__ == "__main__":
 	import sys
-	find=FINDHasher()
+	find=FINDHasher_1()
 	for filename in sys.argv[1:]:
 		h=find.fromFile(filename)
 		print("{},{}".format(h,filename))
